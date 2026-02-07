@@ -1,0 +1,19 @@
+<div style="text-align: center; padding: 20px;">
+  <h1>🚀 O Angular está vivo!</h1>
+  <p>Se você está vendo isso, o componente carregou.</p>
+
+  <hr>
+  <div class="formulario">
+    <h3>Cadastrar Novo Jovem - Célula Next</h3>
+    <input [(ngModel)]="novoMembro.nome" placeholder="Nome Completo">
+    <input [(ngModel)]="novoMembro.email" placeholder="E-mail">
+    <input [(ngModel)]="novoMembro.celular" placeholder="Celular (21) 9xxxx-xxxx">
+    <button (click)="cadastrar()">Salvar no Banco</button>
+  </div>
+  <hr>
+  <ul>
+    <li *ngFor="let membro of membros">
+      <strong>{{ membro.nome }}</strong> — {{ membro.email }} | {{ membro.celular }}
+    </li>
+  </ul>
+</div>
