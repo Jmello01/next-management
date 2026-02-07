@@ -48,4 +48,16 @@ export class AppComponent implements OnInit {
       }
     });
   }
+
+  excluir(id: number): void {
+   if (confirm('Tem certeza que deseja remover este jovem da célula Next?')) {
+     this.membroService.deletar(id).subscribe({
+       next: () => {
+        console.log('Removido com sucesso!');
+        this.carregarMembros(); // Recarrega a lista para o nome sumir da tela
+      },
+      error: (err: any) => console.error('Erro ao excluir:', err)
+    });
+  }
+ }
 }

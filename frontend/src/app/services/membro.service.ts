@@ -23,4 +23,8 @@ export class MembroService {
    return this.http.post<Membro>(this.apiUrl, membro);
  }
 
+  deletar(id: number): Observable<void> {
+   return this.http.delete<void>(`${this.apiUrl}/${id}`);
+}
+
 }

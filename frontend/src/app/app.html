@@ -12,8 +12,13 @@
   </div>
   <hr>
   <ul>
-    <li *ngFor="let membro of membros">
-      <strong>{{ membro.nome }}</strong> — {{ membro.email }} | {{ membro.celular }}
+    <li *ngFor="let membro of membros" class="membro-item">
+      <div class="info">
+        <strong>{{ membro.nome }}</strong> — {{ membro.email }}
+      </div>
+      <button class="btn-excluir" (click)="excluir(membro.id!)">
+        🗑️ Excluir
+      </button>
     </li>
   </ul>
 </div>

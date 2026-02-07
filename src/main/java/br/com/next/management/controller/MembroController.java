@@ -34,4 +34,9 @@ public class MembroController {
                 .map(ResponseEntity::ok) // Se achar, retorna 200 OK
                 .orElse(ResponseEntity.notFound().build()); // Se nao, retorna 404
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        service.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
 }
