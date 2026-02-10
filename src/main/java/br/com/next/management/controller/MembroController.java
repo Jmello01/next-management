@@ -39,4 +39,14 @@ public class MembroController {
         service.deletar(id);
         return ResponseEntity.noContent().build();
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<Membro> atualizar(@PathVariable Long id, @RequestBody Membro membroAtualizado) {
+        // Chamamos o service para fazer a lógica
+        Membro membro = service.atualizar(id, membroAtualizado);
+
+        if (membro != null) {
+            return ResponseEntity.ok(membro); // Retorna 200 OK com o membro atualizado
+        }
+        return ResponseEntity.notFound().build(); // Retorna 404 se o ID não existir
+    }
 }

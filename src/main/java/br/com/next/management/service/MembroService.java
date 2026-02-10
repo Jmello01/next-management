@@ -29,4 +29,15 @@ public class MembroService {
     public void deletar(Long id) {
         repository.deleteById(id);
     }
+
+    public Membro atualizar(Long id, Membro dadosNovos) {
+        // 1. Verificamos se o jovem realmente existe no banco da célula
+        if (repository.existsById(id)) {
+            // 2. Garantimos que o ID do objeto seja o mesmo da URL
+            dadosNovos.setId(id);
+            // 3. O save() aqui vai atuar como um UPDATE
+            return repository.save(dadosNovos);
+        }
+        return null; // Se não existir, retornamos null para o Controller dar 404
+    }
 }
