@@ -18,7 +18,11 @@ public class MembroService {
     }
 
     public Membro salvar(Membro membro) {
-        // Aqui voce poderia colocar validacoes (ex: checar se o e-mail ja existe)
+        // Validação de Negócio: Regra da Célula Next
+        if (membro.getNome() == null || membro.getNome().trim().isEmpty()) {
+            throw new RuntimeException("O nome do membro é obrigatório!");
+        }
+        // Só chega aqui se tiver nome
         return repository.save(membro);
     }
 

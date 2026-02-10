@@ -43,4 +43,18 @@ public class MembroServiceTest {
         // Verifica se o repositório foi chamado exatamente 1 vez
         verify(repository, times(1)).save(any(Membro.class));
     }
+    @Test
+    @DisplayName("Deve lançar erro ao tentar salvar membro sem nome")
+    void deveLancarErroSemNome() {
+        // 1. Arrange - Criamos um membro "inválido" (nome vazio)
+        Membro membroInvalido = new Membro(null, "", "semnome@next.com", "21999999999");
+
+        // 2. & 3. Act & Assert - Verificamos se o erro explode na cara (como deve ser!)
+        assertThrows(RuntimeException.class, () -> {
+            service.salvar(membroInvalido);
+        });
+
+        // O verify garante que o repository NUNCA foi chamado (protegemos o banco!)
+        verify(repository, never()).save(any(Membro.class));
+    }
 }
