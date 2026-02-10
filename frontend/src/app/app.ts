@@ -47,23 +47,22 @@ export class AppComponent implements OnInit {
 
   // Agora, atualize seus métodos de sucesso
   salvarMembro(): void {
-    if (this.isEditando && this.novoMembro.id) {
-      this.membroService.atualizar(this.novoMembro.id, this.novoMembro).subscribe({
-        next: () => {
-          this.exibirToast('✅ Membro atualizado com sucesso!');
-          this.finalizarAcao();
-        }
-      });
-    } else {
-      this.membroService.salvar(this.novoMembro).subscribe({
-        next: () => {
-          this.exibirToast('🚀 Novo jovem cadastrado no Next!');
-          this.finalizarAcao();
-        }
-      });
-    }
-  }
+    const acao = this.isEditando ?
+      this.membroService.atualizar(this.novoMembro.id!, this.novoMembro) :
+      this.membroService.salvar(this.novoMembro);
 
+    acao.subscribe({
+      next: () => {
+        this.exibirToast(this.isEditando ? '✅ Atualizado!' : '🚀 Cadastrado!');
+        this.finalizarAcao();
+      },
+      error: (err) => {
+        // 'err.error' contém a frase "O nome é obrigatório!" vinda do Java
+        const msgErro = err.error || 'Erro ao processar cadastro';
+        this.exibirToast(`⚠️ ${msgErro}`, 'erro');
+      }
+    });
+  }
   excluir(id: number): void {
     if (confirm('Deseja mesmo remover este membro?')) {
       this.membroService.deletar(id).subscribe({
