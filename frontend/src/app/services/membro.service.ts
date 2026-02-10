@@ -22,9 +22,11 @@ export class MembroService {
   salvar(membro: Membro): Observable<Membro> {
    return this.http.post<Membro>(this.apiUrl, membro);
  }
-
   deletar(id: number): Observable<void> {
    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+}
+atualizar(id: number, membro: Membro): Observable<Membro> {
+  return this.http.put<Membro>(`${this.apiUrl}/${id}`, membro);
 }
 
 }

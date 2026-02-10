@@ -1,6 +1,6 @@
-import { FormsModule } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MembroService } from './services/membro.service';
 import { Membro } from './models/membro.model';
 
@@ -12,52 +12,86 @@ import { Membro } from './models/membro.model';
   styleUrl: './app.scss'
 })
 export class AppComponent implements OnInit {
-  // 1. Definição de Variáveis (Atributos)
-  membros: Membro[] = []; // Estava faltando essa linha no seu código!
+  membros: Membro[] = [];
   novoMembro: Membro = { nome: '', email: '', celular: '' };
-
+  isEditando = false;
+  membrosFiltrados: Membro[] = [];
+  termoBusca: string = '';
   constructor(private membroService: MembroService) {}
 
   ngOnInit(): void {
     this.carregarMembros();
   }
 
-  // 2. Método de Listagem
   carregarMembros(): void {
     this.membroService.listarTodos().subscribe({
       next: (dados: Membro[]) => {
         this.membros = dados;
-        console.log('Membros carregados:', dados);
-      },
-      error: (err: any) => {
-        console.error('Erro ao conectar com o Java:', err);
-      }
-    }); // <--- Fecha o subscribe aqui
-  } // <--- Fecha o método carregarMembros aqui
-
-  // 3. Método de Cadastro (Independente!)
-  cadastrar(): void {
-    this.membroService.salvar(this.novoMembro).subscribe({
-      next: (membroSalvo) => {
-        console.log('Salvo com sucesso!', membroSalvo);
-        this.carregarMembros(); // Atualiza a lista na hora
-        this.novoMembro = { nome: '', email: '', celular: '' }; // Limpa os campos
-      },
-      error: (err: any) => {
-        console.error('Erro ao salvar:', err);
+        this.membrosFiltrados = dados; // No início, a lista filtrada é igual à original
       }
     });
+  }
+
+  mensagemToast: string = '';
+  tipoToast: 'sucesso' | 'erro' = 'sucesso';
+
+  exibirToast(msg: string, tipo: 'sucesso' | 'erro' = 'sucesso') {
+    this.mensagemToast = msg;
+    this.tipoToast = tipo;
+
+    // Limpa a mensagem após 3 segundos
+    setTimeout(() => {
+      this.mensagemToast = '';
+    }, 3000);
+  }
+
+  // Agora, atualize seus métodos de sucesso
+  salvarMembro(): void {
+    if (this.isEditando && this.novoMembro.id) {
+      this.membroService.atualizar(this.novoMembro.id, this.novoMembro).subscribe({
+        next: () => {
+          this.exibirToast('✅ Membro atualizado com sucesso!');
+          this.finalizarAcao();
+        }
+      });
+    } else {
+      this.membroService.salvar(this.novoMembro).subscribe({
+        next: () => {
+          this.exibirToast('🚀 Novo jovem cadastrado no Next!');
+          this.finalizarAcao();
+        }
+      });
+    }
   }
 
   excluir(id: number): void {
-   if (confirm('Tem certeza que deseja remover este jovem da célula Next?')) {
-     this.membroService.deletar(id).subscribe({
-       next: () => {
-        console.log('Removido com sucesso!');
-        this.carregarMembros(); // Recarrega a lista para o nome sumir da tela
-      },
-      error: (err: any) => console.error('Erro ao excluir:', err)
-    });
+    if (confirm('Deseja mesmo remover este membro?')) {
+      this.membroService.deletar(id).subscribe({
+        next: () => {
+          this.exibirToast('🗑️ Membro removido!', 'erro');
+          this.carregarMembros();
+        }
+      });
+    }
   }
- }
+
+  prepararEdicao(membro: Membro): void {
+    this.novoMembro = { ...membro }; // Cópia para não alterar a lista enquanto digita
+    this.isEditando = true;
+  }
+
+  finalizarAcao(): void {
+    this.novoMembro = { nome: '', email: '', celular: '' };
+    this.isEditando = false;
+    this.carregarMembros();
+  }
+
+filtrarMembros(): void {
+  const termo = this.termoBusca.toLowerCase(); // Padroniza para minúsculo
+
+  this.membrosFiltrados = this.membros.filter(membro =>
+    membro.nome.toLowerCase().includes(termo) ||
+    membro.email.toLowerCase().includes(termo)
+  );
+}
 }

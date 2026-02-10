@@ -1,24 +1,49 @@
-<div style="text-align: center; padding: 20px;">
-  <h1>🚀 O Angular está vivo!</h1>
-  <p>Se você está vendo isso, o componente carregou.</p>
+<div *ngIf="mensagemToast" class="toast" [ngClass]="tipoToast">
+  {{ mensagemToast }}
+</div>
+
+<main class="container">
+  <div class="card-formulario">
+    <h3>{{ isEditando ? '📝 Editando Membro' : '🚀 Novo Cadastro' }}</h3>
+
+    <div class="inputs-group">
+      <input [(ngModel)]="novoMembro.nome" placeholder="Nome do Jovem">
+      <input [(ngModel)]="novoMembro.email" placeholder="E-mail">
+      <input [(ngModel)]="novoMembro.celular" placeholder="Telefone">
+    </div>
+
+    <button (click)="salvarMembro()" class="btn-salvar">
+      {{ isEditando ? 'Confirmar Alteração' : 'Cadastrar no Next' }}
+    </button>
+    <button *ngIf="isEditando" (click)="finalizarAcao()" class="btn-cancelar">Cancelar</button>
+  </div>
 
   <hr>
-  <div class="formulario">
-    <h3>Cadastrar Novo Jovem - Célula Next</h3>
-    <input [(ngModel)]="novoMembro.nome" placeholder="Nome Completo">
-    <input [(ngModel)]="novoMembro.email" placeholder="E-mail">
-    <input [(ngModel)]="novoMembro.celular" placeholder="Celular (21) 9xxxx-xxxx">
-    <button (click)="cadastrar()">Salvar no Banco</button>
-  </div>
-  <hr>
-  <ul>
-    <li *ngFor="let membro of membros" class="membro-item">
-      <div class="info">
-        <strong>{{ membro.nome }}</strong> — {{ membro.email }}
+
+  <div class="lista-container">
+    <div class="header-lista">
+      <h3>Membros da Célula</h3>
+
+      <div class="busca-container">
+        <input
+          type="text"
+          [(ngModel)]="termoBusca"
+          (input)="filtrarMembros()"
+          placeholder="🔎 Buscar por nome ou e-mail...">
       </div>
-      <button class="btn-excluir" (click)="excluir(membro.id!)">
-        🗑️ Excluir
-      </button>
-    </li>
-  </ul>
-</div>
+    </div>
+
+    <ul class="lista-jovens">
+      <li *ngFor="let membro of membrosFiltrados" class="item-jovem">
+        <div class="info">
+          <strong>{{ membro.nome }}</strong>
+          <span>{{ membro.email }} | {{ membro.celular }}</span>
+        </div>
+        <div class="acoes">
+          <button (click)="prepararEdicao(membro)" class="btn-editar">✏️</button>
+          <button (click)="excluir(membro.id!)" class="btn-excluir">🗑️</button>
+        </div>
+      </li>
+    </ul>
+  </div>
+</main>
